@@ -11,11 +11,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let owner0: LocalWallet = "45658215d9a309352ce6b16d3678342b3a666c7cca8117dfc4da171d5cfd7853"
         .parse::<LocalWallet>()?
         .with_chain_id(Chain::BaseSepolia);
-    let owner1: LocalWallet = "4611c596cd340c03b7e7a787a8373db1a2c3cd22a8b8189477b767c1f71f2747"
+    let owner1: LocalWallet = "e78a8647d29fb31676d46e499efe79866565edf60dde77bd77f9fbbe0920710a"
         .parse::<LocalWallet>()?
         .with_chain_id(Chain::BaseSepolia);
     let client = Arc::new(SignerMiddleware::new(provider.clone(), owner0.clone()));
-    let smart_wallet_address: Address = "0x1a880d2fd5ba3949d805882966ab7e78b3854ae3".parse()?;
+    let smart_wallet_address: Address = "0x2f84acc18877f2a69e864e572c810816bd4fdb64".parse()?;
     let smart_wallet = CoinbaseSmartWallet::new(smart_wallet_address, client.clone());
 
     let block_number = client.get_block_number().await.unwrap();
@@ -30,7 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let signature1 = owner1.sign_hash(replay_safe_hash.into()).unwrap();
     let res = smart_wallet
         .is_valid_signature(
-            hash,
+            replay_safe_hash,
             encode(&[Token::Tuple(vec![
                 Token::Uint(1.into()),  
                 Token::Bytes(signature1.to_vec()),

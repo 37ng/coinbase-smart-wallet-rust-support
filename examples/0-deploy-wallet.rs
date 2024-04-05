@@ -10,7 +10,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let owner0: LocalWallet = "45658215d9a309352ce6b16d3678342b3a666c7cca8117dfc4da171d5cfd7853"
         .parse::<LocalWallet>()?
         .with_chain_id(Chain::BaseSepolia);
-    let owner1: LocalWallet = "4611c596cd340c03b7e7a787a8373db1a2c3cd22a8b8189477b767c1f71f2747"
+    let owner1: LocalWallet = "cef56928193cbc76a04e43a378f3a0ea5e92cfd41fa13934951c0807f3c2a202"
         .parse::<LocalWallet>()?
         .with_chain_id(Chain::BaseSepolia);
     let client = SignerMiddleware::new(provider.clone(), owner0.clone());
