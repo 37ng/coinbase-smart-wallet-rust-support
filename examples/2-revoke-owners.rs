@@ -19,13 +19,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let smart_wallet = CoinbaseSmartWallet::new(smart_wallet_address, client.clone());
 
     let block_number = client.get_block_number().await.unwrap();
-    println!("block number: {:?}", block_number);
     
-    // println!("owner at 1: {:?}", smart_wallet.owner_at_index(1.into()).call().await.unwrap());
     let tx = smart_wallet.remove_owner_at_index(1.into());
     let pending_tx = tx.send().await.unwrap();
     let _ = pending_tx.await.unwrap();
-    // println!("owner at 1 after removal: {:?}", smart_wallet.owner_at_index(1.into()).call().await.unwrap());
+    println!("owner1 removed");
 
     let hash: [u8; 32] = H256::random().into();
     let replay_safe_hash = smart_wallet.replay_safe_hash(hash).call().await.unwrap();
@@ -34,22 +32,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .is_valid_signature(
             hash,
             encode(&[Token::Tuple(vec![
-                Token::Uint(1.into()),  // owner1 index
+                Token::Uint(1.into()),  
                 Token::Bytes(signature1.to_vec()),
             ])])
             .into(),
         )
         .call()
-        .await;
+        .await
+        .unwrap();
     
-    assert!(res.is_err());
-    println!("verification error");
+    assert_ne!(res, [0x16, 0x26, 0xba, 0x7e]);
+    println!("Verification no longer works after owner is remove");
 
     let res = smart_wallet
         .is_valid_signature(
             hash,
             encode(&[Token::Tuple(vec![
-                Token::Uint(1.into()),  // owner1 index
+                Token::Uint(1.into()),  
                 Token::Bytes(signature1.to_vec()),
             ])]) 
             .into(),
@@ -59,7 +58,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .unwrap();
     assert_eq!(res, [0x16, 0x26, 0xba, 0x7e], "owner1's signature should be valid after time travel");
-    println!("time travel");
+    println!("time travel!!!");
     
     Ok(())
 }
